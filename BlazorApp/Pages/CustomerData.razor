@@ -1,0 +1,55 @@
+﻿@page "/customerdata"
+
+@using BlazorApp
+@inject ICustomerService CustomerService
+
+<h1>Customer management</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (customers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Company Name</th>
+                <th>Contact Name</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Region</th>
+                <th>Postal Code</th>
+                <th>Country</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.CompanyName</td>
+                    <td>@customer.ContactName</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.City</td>
+                    <td>@customer.Region</td>
+                    <td>@customer.PostalCode</td>
+                    <td>@customer.Country</td>
+                    <td>@customer.Phone</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private CustomerViewModel[] customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await CustomerService.GetCustomersAsync(0, 0);
+        customers = result.ToArray();
+    }
+}

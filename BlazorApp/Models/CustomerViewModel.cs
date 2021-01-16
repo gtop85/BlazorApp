@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorApp.Models
+namespace BlazorApp
 {
-    public class Customer
+    public class CustomerViewModel
     {
         public string Id { get; set; }
+        [Required]
         public string CompanyName { get; set; }
         public string ContactName { get; set; }
+        [Required]
         public string Address { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
