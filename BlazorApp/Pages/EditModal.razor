@@ -1,0 +1,36 @@
+﻿@inject ICustomerService _customerService
+<h4> Edit customer   </h4>
+<div class="container">
+    <div class="row justify-content-center">
+        <EditForm class="form-row my-2 col-md-9 col-lg-9 col-sm-12 " Model="@Customer" OnValidSubmit="Update">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <InputText class="form-group form-control mx2" placeholder="Company Name" id="companyName" @bind-Value="@Customer.CompanyName"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="Contact Name" id="contactName" @bind-Value="@Customer.ContactName"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="Address" id="address" @bind-Value="@Customer.Address"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="City" id="city" @bind-Value="@Customer.City"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="Region" id="region" @bind-Value="@Customer.Region"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="Postal Code" id="postalcode" @bind-Value="@Customer.PostalCode"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="Country" id="country" @bind-Value="@Customer.Country"></InputText>
+            <InputText class="form-group form-control mx2" placeholder="Phone" id="phone" @bind-Value="@Customer.Phone"></InputText>
+
+            <button type="submit" class="btn btn-outline-success mx-auto d-block btn-block">Update</button>
+            <button type="button" class="btn btn-outline-danger mx-auto d-block btn-block" @onclick="() => ModalInstance.CloseAsync()">Cancel</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public CustomerViewModel Customer { get; set; }
+
+    private async Task Update()
+    {
+        var result = await _customerService.UpdateCustomerAsync(Id, Customer);
+        await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result != null));
+    }
+}

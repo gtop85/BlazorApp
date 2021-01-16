@@ -1,7 +1,7 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: Calibri, Helvetica, Arial, sans-serif;
 }
 
 a, .btn-link {
@@ -179,5 +179,10 @@ app {
     .sidebar .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
+    }
+
+    .blazored-modal {
+        width: 40%;
+        text-align: center;
     }
 }

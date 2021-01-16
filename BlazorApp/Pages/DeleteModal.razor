@@ -1,0 +1,22 @@
+﻿@inject ICustomerService _customerService
+
+<h4>
+    Are sure you want to delete @CompanyName?
+</h4>
+<button type="button" class="btn btn-outline-success mx-auto d-block w-50 btn-block" @onclick="Delete">OK</button>
+<button type="button" class="btn btn-outline-danger mx-auto d-block w-50 btn-block" @onclick="() => ModalInstance.CloseAsync()">Cancel</button>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string CompanyName { get; set; }
+
+    private async Task Delete()
+    {
+        var result = await _customerService.DeleteCustomerAsync(Id);
+        await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+    }
+}

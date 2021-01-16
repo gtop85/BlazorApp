@@ -1,4 +1,5 @@
 using AutoMapper;
+using Blazored.Modal;
 using DataAccessLibrary;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,7 @@ namespace BlazorApp
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazoredModal();
 
             services.AddTransient<IDBContext, DBContext>();
             services.AddTransient<ICustomerContext, CustomerContext>();

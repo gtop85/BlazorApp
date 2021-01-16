@@ -1,11 +1,8 @@
-﻿@page "/customerdata"
+﻿@page "/customerData"
 
-@using BlazorApp
-@inject ICustomerService CustomerService
+@inject ICustomerService _customerService
 
 <h1>Customer management</h1>
-
-<p>This component demonstrates fetching data from a service.</p>
 
 @if (customers == null)
 {
@@ -13,7 +10,7 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Company Name</th>
@@ -38,6 +35,10 @@ else
                     <td>@customer.PostalCode</td>
                     <td>@customer.Country</td>
                     <td>@customer.Phone</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => UpdateCustomer(customer))">Edit</button>  |
+                        <button class="btn btn-sm btn-outline-danger" @onclick="@(() => DeleteCustomer(customer))">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -45,11 +46,65 @@ else
 }
 
 @code {
-    private CustomerViewModel[] customers;
+
+    private List<CustomerViewModel> customers;
+    private CustomerViewModel customer;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await CustomerService.GetCustomersAsync(0, 0);
-        customers = result.ToArray();
+        customers = await _customerService.GetCustomersAsync(0, 0);
+    }
+
+    [CascadingParameter] public IModalService Modal { get; set; }
+
+    private async Task DeleteCustomer(CustomerViewModel customer)
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true
+        };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(CustomerViewModel.Id), customer.Id);
+        parameters.Add(nameof(CustomerViewModel.CompanyName), customer.CompanyName);
+
+        var deleteModal = Modal.Show<DeleteModal>("", parameters, options);
+        var result = await deleteModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine("Deleted!");
+            Console.WriteLine(result.Data);
+
+            customers = await _customerService.GetCustomersAsync(0, 0);
+        }
+    }
+
+    private async Task UpdateCustomer(CustomerViewModel customer)
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true
+        };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(CustomerViewModel.Id), customer.Id);
+        parameters.Add("customer", customer);
+
+        var editModal = Modal.Show<EditModal>("", parameters, options);
+        var result = await editModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine(result.Data);
+
+            customers = await _customerService.GetCustomersAsync(0, 0);
+        }
     }
 }
