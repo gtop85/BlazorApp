@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using MongoDB.Bson;
+using Newtonsoft.Json;
+using System;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,11 +20,11 @@ namespace BlazorApp
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CustomerViewModel>>> GetAsync()
+        public async Task<ActionResult<CustomerCollection>> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var result = await _customerService.GetCustomersAsync(10, 0);
+            var result = await _customerService.GetCustomersAsync(pagination);
 
-            return Ok(result);
+            return Ok(JsonConvert.SerializeObject(result));
         }
 
         [HttpPost]
@@ -34,7 +36,7 @@ namespace BlazorApp
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> PutAsync([FromRoute] string id, [FromForm] CustomerViewModel customer)
+        public async Task<ActionResult<bool>> PutAsync([FromRoute] Guid id, [FromForm] CustomerViewModel customer)
         {
             var result = await _customerService.UpdateCustomerAsync(id, customer);
 
@@ -43,7 +45,7 @@ namespace BlazorApp
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(string id)
+        public async Task<ActionResult> DeleteAsync(Guid id)
         {
             var result = await _customerService.DeleteCustomerAsync(id);
 

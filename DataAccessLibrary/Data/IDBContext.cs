@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DataAccessLibrary
@@ -8,7 +7,7 @@ namespace DataAccessLibrary
     {
         Task InsertRecordAsync<T>(string table, T record);
 
-        Task<List<T>> GetRecordsAsync<T>(string table);
+        Task<PagedCollection<T>> GetRecordsAsync<T>(string table, int page, int pagesize);
 
         Task<bool> UpdateAsync<T>(string table, Guid id, T record);
 

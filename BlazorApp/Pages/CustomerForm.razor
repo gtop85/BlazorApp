@@ -3,21 +3,11 @@
 @inject ICustomerService _customerService
 
 <h3>Enter customer's details</h3>
+<div class="col-md-8 col-lg-4">
+    <BasicForm ButtonText="Create" Customer="@newCustomer" SubmitAction="AddCustomer"
+               CancelButtonText="Clear Form" CancelAction="ClearForm"></BasicForm>
+</div>
 
-<EditForm class="form-row my-2 col-md-8 col-lg-4" Model="@newCustomer" OnValidSubmit="AddCustomer">
-    <DataAnnotationsValidator></DataAnnotationsValidator>
-    <ValidationSummary></ValidationSummary>
-    <InputText class="form-group form-control mx2" placeholder="Company Name" id="companyName" @bind-Value="@newCustomer.CompanyName"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="Contact Name" id="contactName" @bind-Value="@newCustomer.ContactName"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="Address" id="address" @bind-Value="@newCustomer.Address"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="City" id="city" @bind-Value="@newCustomer.City"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="Region" id="region" @bind-Value="@newCustomer.Region"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="Postal Code" id="postalcode" @bind-Value="@newCustomer.PostalCode"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="Country" id="country" @bind-Value="@newCustomer.Country"></InputText>
-    <InputText class="form-group form-control mx2" placeholder="Phone" id="phone" @bind-Value="@newCustomer.Phone"></InputText>
-
-    <button type="submit" class="btn btn-primary">Add customer</button>
-</EditForm>
 @code {
     private CustomerViewModel newCustomer = new CustomerViewModel();
 
@@ -25,6 +15,11 @@
     {
         var result = await _customerService.CreateCustomerAsync(newCustomer);
 
+        newCustomer = new CustomerViewModel();
+    }
+
+    private void ClearForm()
+    {
         newCustomer = new CustomerViewModel();
     }
 }

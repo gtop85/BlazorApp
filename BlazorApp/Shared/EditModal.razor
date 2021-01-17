@@ -1,0 +1,23 @@
+﻿@inject ICustomerService _customerService
+<h4> Edit customer   </h4>
+<div class="container">
+    <div class="row justify-content-center">
+        <BasicForm ButtonText="Update" Customer="@Customer" SubmitAction="Update"
+                   CancelButtonText="Cancel" CancelAction="(()=> ModalInstance.CloseAsync())"></BasicForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public Guid Id { get; set; }
+    [Parameter]
+    public CustomerViewModel Customer { get; set; }
+
+    private async Task Update()
+    {
+        var result = await _customerService.UpdateCustomerAsync(Id, Customer);
+        await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result != null));
+    }
+}

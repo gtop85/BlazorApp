@@ -7,6 +7,7 @@ namespace BlazorApp
     {
         [BsonId]
         [BsonIgnoreIfDefault]
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
         public Guid Id { get; set; }
         public string CompanyName { get; set; }
         public string ContactName { get; set; }

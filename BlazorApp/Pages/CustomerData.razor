@@ -10,6 +10,9 @@
 }
 else
 {
+    <Pagination TotalPages="totalPages" CurrentPage="currentPage"
+                Radius="2" SelectedPage="SelectedPage">
+    </Pagination>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -47,12 +50,30 @@ else
 
 @code {
 
+    private CustomerCollection customerCollection;
     private List<CustomerViewModel> customers;
     private CustomerViewModel customer;
+    private int totalPages;
+    private int currentPage = 1;
+    private PaginationDTO pagination = new PaginationDTO { Page = 1, Pagesize = 10 };
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await _customerService.GetCustomersAsync(0, 0);
+        await LoadCustomers(pagination);
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        currentPage = page;
+        await LoadCustomers(new PaginationDTO { Page = page, Pagesize = 10});
+    }
+
+    private async Task LoadCustomers(PaginationDTO pagination)
+    {
+        customerCollection = await _customerService.GetCustomersAsync(pagination);
+        customers = customerCollection.Items;
+
+        totalPages = customerCollection.TotalPages;
     }
 
     [CascadingParameter] public IModalService Modal { get; set; }
@@ -76,10 +97,10 @@ else
         }
         else
         {
-            Console.WriteLine("Deleted!");
             Console.WriteLine(result.Data);
 
-            customers = await _customerService.GetCustomersAsync(0, 0);
+            customerCollection = await _customerService.GetCustomersAsync(pagination);
+            customers = customerCollection.Items;
         }
     }
 
@@ -104,7 +125,8 @@ else
         {
             Console.WriteLine(result.Data);
 
-            customers = await _customerService.GetCustomersAsync(0, 0);
+            customerCollection = await _customerService.GetCustomersAsync(pagination);
+            customers = customerCollection.Items;
         }
     }
 }

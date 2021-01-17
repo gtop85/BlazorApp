@@ -1,0 +1,39 @@
+﻿<EditForm class="form-row my-2" Model="@Customer" OnValidSubmit="SubmitAction">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+    <ValidationMessage For="@(()=> @Customer.CompanyName)"></ValidationMessage>
+    <InputText class="form-group form-control mx2" placeholder="Company Name" id="companyName" @bind-Value="@Customer.CompanyName"></InputText>
+
+    <ValidationMessage For="@(()=> @Customer.ContactName)"></ValidationMessage>
+    <InputText class="form-group form-control mx2" placeholder="Contact Name" id="contactName" @bind-Value="@Customer.ContactName"></InputText>
+
+    <ValidationMessage For="@(()=> @Customer.Address)"></ValidationMessage>
+    <InputText class="form-group form-control mx2" placeholder="Address" id="address" @bind-Value="@Customer.Address"></InputText>
+
+    <InputText class="form-group form-control mx2" placeholder="City" id="city" @bind-Value="@Customer.City"></InputText>
+
+    <InputText class="form-group form-control mx2" placeholder="Region" id="region" @bind-Value="@Customer.Region"></InputText>
+
+    <ValidationMessage For="@(()=> @Customer.PostalCode)"></ValidationMessage>
+    <InputText class="form-group form-control mx2" placeholder="Postal Code" id="postalcode" @bind-Value="@Customer.PostalCode"></InputText>
+
+    <InputText class="form-group form-control mx2" placeholder="Country" id="country" @bind-Value="@Customer.Country"></InputText>
+
+    <ValidationMessage For="@(()=> @Customer.ContactName)"></ValidationMessage>
+    <InputText class="form-group form-control mx2" placeholder="Phone" id="phone" @bind-Value="@Customer.Phone"></InputText>
+
+    <button type="submit" class="btn btn-outline-success mx-auto d-block btn-block">@ButtonText</button>
+    <button type="reset" class="btn btn-outline-danger mx-auto d-block btn-block" @onclick="CancelAction">@CancelButtonText</button>
+</EditForm>
+@code {
+    [Parameter]
+    public CustomerViewModel Customer { get; set; }
+    [Parameter]
+    public string ButtonText { get; set; }
+    [Parameter]
+    public EventCallback SubmitAction { get; set; }
+    [Parameter]
+    public string CancelButtonText { get; set; }
+    [Parameter]
+    public EventCallback CancelAction { get; set; }
+}

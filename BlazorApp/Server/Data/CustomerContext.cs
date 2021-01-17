@@ -20,9 +20,9 @@ namespace BlazorApp
             await _db.InsertRecordAsync(CustomersTable, customerData);
         }
 
-        public async Task<List<CustomerDataModel>> GetCustomersAsync<T>()
+        public async Task<PagedCollection<CustomerDataModel>> GetCustomersAsync<T>(PaginationDTO pagination)
         {
-            var result = await _db.GetRecordsAsync<CustomerDataModel>(CustomersTable);
+            var result = await _db.GetRecordsAsync<CustomerDataModel>(CustomersTable, pagination.Page, pagination.Pagesize);
 
             return result;
         }
