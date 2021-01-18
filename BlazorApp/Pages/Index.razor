@@ -1,4 +1,29 @@
 ﻿@page "/"
+@inject AuthenticationStateProvider AuthState
 
-Blazor web app with MongoDB
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello, @Username!</h1>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Please login</h1>
+    </NotAuthorized>
+</AuthorizeView>
 
+@code
+{
+    private string Username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+
+        Username =
+            state.User.Claims
+            .Where(c => c.Type.Equals("name"))
+            .Select(c => c.Value)
+            .FirstOrDefault() ?? "Anonymous User";
+
+        await base.OnInitializedAsync();
+    }
+}

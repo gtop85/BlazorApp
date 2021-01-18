@@ -1,8 +1,7 @@
 ﻿@page "/customerData"
-
+@attribute [Authorize]
 @inject ICustomerService _customerService
-
-<h1>Customer management</h1>
+<h2>Customer management</h2>
 
 @if (customers == null)
 {
@@ -52,7 +51,6 @@ else
 
     private CustomerCollection customerCollection;
     private List<CustomerViewModel> customers;
-    private CustomerViewModel customer;
     private int totalPages;
     private int currentPage = 1;
     private PaginationDTO pagination = new PaginationDTO { Page = 1, Pagesize = 10 };
@@ -65,7 +63,7 @@ else
     private async Task SelectedPage(int page)
     {
         currentPage = page;
-        await LoadCustomers(new PaginationDTO { Page = page, Pagesize = 10});
+        await LoadCustomers(new PaginationDTO { Page = page, Pagesize = 10 });
     }
 
     private async Task LoadCustomers(PaginationDTO pagination)
