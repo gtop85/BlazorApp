@@ -20,7 +20,7 @@ namespace BlazorApp
             await _db.InsertRecordAsync(CustomersTable, customerData);
         }
 
-        public async Task<PagedCollection<CustomerDataModel>> GetCustomersAsync<T>(PaginationDTO pagination)
+        public async Task<PagedCollection<CustomerDataModel>> GetCustomersAsync(PaginationDTO pagination)
         {
             var result = await _db.GetRecordsAsync<CustomerDataModel>(CustomersTable, pagination.Page, pagination.Pagesize);
 
@@ -34,7 +34,7 @@ namespace BlazorApp
             return result;
         }
 
-        public async Task<bool> DeleteCustomerAsync<T>(Guid id)
+        public async Task<bool> DeleteCustomerAsync(Guid id)
         {
             var result = await _db.DeleteRecordAsync<CustomerDataModel>(CustomersTable, id);
 

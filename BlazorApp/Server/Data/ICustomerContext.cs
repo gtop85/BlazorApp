@@ -7,9 +7,9 @@ namespace BlazorApp
 {
     public interface ICustomerContext
     {
-        Task<bool> DeleteCustomerAsync<T>(Guid id);
-        Task<PagedCollection<CustomerDataModel>> GetCustomersAsync<T>(PaginationDTO pagination);
+        Task<PagedCollection<CustomerDataModel>> GetCustomersAsync(PaginationDTO pagination);
         Task InsertCustomerAsync(CustomerDataModel customerData);
         Task<bool> UpdateCustomerAsync(Guid id, CustomerDataModel customerData);
+        Task<bool> DeleteCustomerAsync(Guid id);
     }
 }

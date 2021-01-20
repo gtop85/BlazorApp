@@ -28,9 +28,9 @@ namespace BlazorApp
             return customer;
         }
 
-        public async Task<CustomerCollection> GetCustomersAsync(PaginationDTO pagination)
+        public async Task<CustomerCollection> FetchCustomersAsync(PaginationDTO pagination)
         {
-            var data = await _dB.GetCustomersAsync<CustomerDataModel>(pagination);
+            var data = await _dB.GetCustomersAsync(pagination);
             CustomerCollection result = _mapper.Map<PagedCollection<CustomerDataModel>, CustomerCollection>(data);
 
             return result;
@@ -38,7 +38,8 @@ namespace BlazorApp
 
         public async Task<CustomerViewModel> UpdateCustomerAsync(Guid id, CustomerViewModel customer)
         {
-            //if (!Guid.TryParse(id, out Guid guid)) return null;
+            if (customer == null || customer.Id == null || customer.Id == Guid.Empty || id == Guid.Empty) return null;
+            if (customer.Id != id) return null;
             var customerData = _mapper.Map<CustomerViewModel, CustomerDataModel>(customer);
             var result = await _dB.UpdateCustomerAsync(id, customerData);
             customer.Id = id;
@@ -49,8 +50,8 @@ namespace BlazorApp
 
         public async Task<bool> DeleteCustomerAsync(Guid id)
         {
-            //if (!Guid.TryParse(id, out Guid guid)) return false;
-            var result = await _dB.DeleteCustomerAsync<CustomerDataModel>(id);
+            if (id == Guid.Empty) return false;
+            var result = await _dB.DeleteCustomerAsync(id);
 
             return result;
         }

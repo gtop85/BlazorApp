@@ -23,7 +23,7 @@ namespace BlazorApp
         [HttpGet]
         public async Task<ActionResult<CustomerCollection>> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var result = await _customerService.GetCustomersAsync(pagination);
+            var result = await _customerService.FetchCustomersAsync(pagination);
 
             return Ok(JsonConvert.SerializeObject(result));
         }
