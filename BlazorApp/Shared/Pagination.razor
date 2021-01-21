@@ -12,11 +12,37 @@
 </nav>
 
 @code {
+    private int _currentPage;
+    private int _totalPages;
     [Parameter]
-    public int CurrentPage { get; set; } = 1;
+    public int CurrentPage
+    {
+        get => _currentPage;
+        set
+        {
+            if (_currentPage == value) return;
+
+            _currentPage = value;
+            CurrentPageChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int> CurrentPageChanged { get; set; }
 
     [Parameter]
-    public int TotalPages { get; set; }
+    public int TotalPages
+    {
+        get => _totalPages;
+        set
+        {
+            if (_totalPages == value) return;
+
+            _totalPages = value;
+            TotalPagesChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int> TotalPagesChanged { get; set; }
 
     [Parameter]
     public int Radius { get; set; }

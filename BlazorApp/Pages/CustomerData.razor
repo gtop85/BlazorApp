@@ -1,130 +1,32 @@
 ﻿@page "/customerData"
-@attribute [Authorize]
-@inject ICustomerService _customerService
-<h2>Customer management</h2>
+    @attribute [Authorize]
+    @inject ICustomerService _customerService
+    <h2>Customer management</h2>
 
-@if (customers == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <Pagination TotalPages="totalPages" CurrentPage="currentPage"
-                Radius="2" SelectedPage="SelectedPage">
-    </Pagination>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Company Name</th>
-                <th>Contact Name</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>Region</th>
-                <th>Postal Code</th>
-                <th>Country</th>
-                <th>Phone</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var customer in customers)
-            {
-                <tr>
-                    <td>@customer.CompanyName</td>
-                    <td>@customer.ContactName</td>
-                    <td>@customer.Address</td>
-                    <td>@customer.City</td>
-                    <td>@customer.Region</td>
-                    <td>@customer.PostalCode</td>
-                    <td>@customer.Country</td>
-                    <td>@customer.Phone</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => UpdateCustomer(customer))">Edit</button>  |
-                        <button class="btn btn-sm btn-outline-danger" @onclick="@(() => DeleteCustomer(customer))">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@code {
-
-    private CustomerCollection customerCollection;
-    private List<CustomerViewModel> customers;
-    private int totalPages;
-    private int currentPage = 1;
-    private PaginationDTO pagination = new PaginationDTO { Page = 1, Pagesize = 10 };
-
-    protected override async Task OnInitializedAsync()
+    @if (customers == null)
     {
-        await LoadCustomers(pagination);
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <CustomerTable @bind-Customers="customers" @bind-CurrentPage="currentPage"
+                       @bind-TotalPages="totalPages" @bind-Pagination="pagination">
+        </CustomerTable>
     }
 
-    private async Task SelectedPage(int page)
-    {
-        currentPage = page;
-        await LoadCustomers(new PaginationDTO { Page = page, Pagesize = 10 });
-    }
+    @code {
 
-    private async Task LoadCustomers(PaginationDTO pagination)
-    {
-        customerCollection = await _customerService.FetchCustomersAsync(pagination);
-        customers = customerCollection.Items;
+        private CustomerCollection customerCollection;
+        private List<CustomerViewModel> customers;
+        private int totalPages;
+        private int currentPage = 1;
+        private PaginationDTO pagination = new PaginationDTO { Page = 1, Pagesize = 10 };
 
-        totalPages = customerCollection.TotalPages;
-    }
-
-    [CascadingParameter] public IModalService Modal { get; set; }
-
-    private async Task DeleteCustomer(CustomerViewModel customer)
-    {
-        var options = new ModalOptions()
+        protected override async Task OnInitializedAsync()
         {
-            HideCloseButton = true
-        };
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(CustomerViewModel.Id), customer.Id);
-        parameters.Add(nameof(CustomerViewModel.CompanyName), customer.CompanyName);
-
-        var deleteModal = Modal.Show<DeleteModal>("", parameters, options);
-        var result = await deleteModal.Result;
-
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-        }
-        else
-        {
-            Console.WriteLine(result.Data);
-
             customerCollection = await _customerService.FetchCustomersAsync(pagination);
             customers = customerCollection.Items;
+            currentPage = customerCollection.CurrentPage;
+            totalPages = customerCollection.TotalPages;
         }
     }
-
-    private async Task UpdateCustomer(CustomerViewModel customer)
-    {
-        var options = new ModalOptions()
-        {
-            HideCloseButton = true
-        };
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(CustomerViewModel.Id), customer.Id);
-        parameters.Add("customer", customer);
-
-        var editModal = Modal.Show<EditModal>("", parameters, options);
-        var result = await editModal.Result;
-
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-        }
-        else
-        {
-            Console.WriteLine(result.Data);
-
-            customerCollection = await _customerService.FetchCustomersAsync(pagination);
-            customers = customerCollection.Items;
-        }
-    }
-}

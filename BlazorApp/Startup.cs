@@ -35,7 +35,7 @@ namespace BlazorApp
 
             services.AddTransient<IDBContext, DBContext>();
             services.AddTransient<ICustomerContext, CustomerContext>();
-            services.AddTransient<ICustomerService, CustomerService>();
+            services.AddSingleton<ICustomerService, CustomerService>();
 
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(x => x.GetRequiredService<IOptions<DatabaseSettings>>().Value);

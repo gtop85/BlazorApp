@@ -1,18 +1,15 @@
 using BlazorApp;
 using System;
 using Xunit;
-using Xunit.Extensions;
 
 namespace UnitTests
 {
     public class CrudTests
     {
-        public static CustomerViewModel Customer;
-
         [Fact]
         public async void GetCustomersSuccess()
         {
-            CustomerService customerService = Extensions.MockCustomerServiceForGet();
+            ICustomerService customerService = Extensions.MockCustomerServiceForGet();
 
             var result = await customerService.FetchCustomersAsync(new PaginationDTO());
 
@@ -26,7 +23,7 @@ namespace UnitTests
         [Fact]
         public async void GetCustomersFailure()
         {
-            CustomerService customerService = Extensions.MockCustomerServiceForGet();
+            ICustomerService customerService = Extensions.MockCustomerServiceForGet();
 
             var result = await customerService.FetchCustomersAsync(new PaginationDTO());
 
@@ -42,7 +39,7 @@ namespace UnitTests
         public async void InsertCustomerSuccess()
         {
             CustomerViewModel newCustomer = Extensions.GenerateCustomer(false);
-            CustomerService customerService = Extensions.MockCustomerServiceForPost();
+            ICustomerService customerService = Extensions.MockCustomerServiceForPost();
 
             var result = await customerService.CreateCustomerAsync(newCustomer);
 
@@ -60,7 +57,7 @@ namespace UnitTests
         [Fact]
         public async void InsertCustomerFailure()
         {
-            CustomerService customerService = Extensions.MockCustomerServiceForPost();
+            ICustomerService customerService = Extensions.MockCustomerServiceForPost();
 
             CustomerViewModel newCustomer = Extensions.GenerateCustomer(false);
             var result = await customerService.CreateCustomerAsync(newCustomer);
@@ -81,7 +78,7 @@ namespace UnitTests
         public async void UpdateCustomerSuccess()
         {
             CustomerViewModel customer = Extensions.GenerateCustomer();
-            CustomerService customerService = Extensions.MockCustomerServiceForUpdate();
+            ICustomerService customerService = Extensions.MockCustomerServiceForUpdate();
 
             var result = await customerService.UpdateCustomerAsync(customer.Id.Value, customer);
 
@@ -101,7 +98,7 @@ namespace UnitTests
         [ClassData(typeof(CustomerDataGenerator))]
         public async void UpdateCustomerFailure(Guid id, CustomerViewModel customer)
         {
-            CustomerService customerService = Extensions.MockCustomerServiceForUpdate();
+            ICustomerService customerService = Extensions.MockCustomerServiceForUpdate();
 
             var result = await customerService.UpdateCustomerAsync(id, customer);
 
@@ -112,7 +109,7 @@ namespace UnitTests
         [Fact]
         public async void DeleteCustomerSuccess()
         {
-            CustomerService customerService = Extensions.MockCustomerServiceForDelete();
+            ICustomerService customerService = Extensions.MockCustomerServiceForDelete();
 
             var result = await customerService.DeleteCustomerAsync(Guid.NewGuid());
 
@@ -122,7 +119,7 @@ namespace UnitTests
         [Fact]
         public async void DeleteCustomerFailure()
         {
-            CustomerService customerService = Extensions.MockCustomerServiceForDelete();
+            ICustomerService customerService = Extensions.MockCustomerServiceForDelete();
 
             var result = await customerService.DeleteCustomerAsync(Guid.Empty);
 

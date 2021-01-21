@@ -1,0 +1,173 @@
+﻿@inject ICustomerService _customerService
+
+
+<Pagination TotalPages="_totalPages" @bind-CurrentPage="_currentPage"
+            Radius="2" SelectedPage="SelectedPage">
+</Pagination>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Company Name</th>
+            <th>Contact Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Region</th>
+            <th>Postal Code</th>
+            <th>Country</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Customers)
+        {
+            <tr>
+                <td>@customer.CompanyName</td>
+                <td>@customer.ContactName</td>
+                <td>@customer.Address</td>
+                <td>@customer.City</td>
+                <td>@customer.Region</td>
+                <td>@customer.PostalCode</td>
+                <td>@customer.Country</td>
+                <td>@customer.Phone</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => UpdateCustomer(customer))">Edit</button>  |
+                    <button class="btn btn-sm btn-outline-danger" @onclick="@(() => DeleteCustomer(customer))">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+
+    private CustomerCollection customerCollection;
+    private List<CustomerViewModel> _customers = new List<CustomerViewModel>();
+    private int _totalPages;
+    private int _currentPage;
+    private PaginationDTO _pagination;
+
+    [Parameter]
+    public List<CustomerViewModel> Customers
+    {
+        get => _customers;
+        set
+        {
+            if (_customers == value) return;
+
+            _customers = value;
+            CustomersChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<List<CustomerViewModel>> CustomersChanged { get; set; }
+
+    [Parameter]
+    public int TotalPages
+    {
+        get => _totalPages;
+        set
+        {
+            if (_totalPages == value) return;
+
+            _totalPages = value;
+            TotalPagesChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int> TotalPagesChanged { get; set; }
+
+    [Parameter]
+    public int CurrentPage
+    {
+        get => _currentPage;
+        set
+        {
+            if (_currentPage == value) return;
+
+            _currentPage = value;
+            CurrentPageChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int> CurrentPageChanged { get; set; }
+
+    [Parameter]
+    public PaginationDTO Pagination
+    {
+        get => _pagination;
+        set
+        {
+            if (_pagination == value) return;
+
+            _pagination = value;
+            PaginationChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<PaginationDTO> PaginationChanged { get; set; }
+
+    [CascadingParameter] public IModalService Modal { get; set; }
+
+    private async Task SelectedPage(int page)
+    {
+        _currentPage = page;
+        await LoadCustomers(new PaginationDTO { Page = page, Pagesize = 10 });
+    }
+
+    private async Task LoadCustomers(PaginationDTO pagination)
+    {
+        customerCollection = await _customerService.FetchCustomersAsync(pagination);
+        _customers = customerCollection.Items;
+        _currentPage = customerCollection.CurrentPage;
+        _totalPages = customerCollection.TotalPages;
+    }
+
+    private async Task DeleteCustomer(CustomerViewModel customer)
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true
+        };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(CustomerViewModel.Id), customer.Id);
+        parameters.Add(nameof(CustomerViewModel.CompanyName), customer.CompanyName);
+
+        var deleteModal = Modal.Show<DeleteModal>("", parameters, options);
+        var result = await deleteModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine(result.Data);
+
+            await LoadCustomers(new PaginationDTO { Page = _currentPage, Pagesize = 10 });
+        }
+    }
+
+    private async Task UpdateCustomer(CustomerViewModel customer)
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true
+        };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(CustomerViewModel.Id), customer.Id);
+        parameters.Add("customer", customer);
+
+        var editModal = Modal.Show<EditModal>("", parameters, options);
+        var result = await editModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine(result.Data);
+
+            await LoadCustomers(new PaginationDTO { Page = _currentPage, Pagesize = 10 });
+        }
+    }
+}
