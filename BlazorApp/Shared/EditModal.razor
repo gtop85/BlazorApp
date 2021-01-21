@@ -1,4 +1,6 @@
 ﻿@inject ICustomerService _customerService
+@inject IToastService toastService
+
 <h4> Edit customer   </h4>
 <div class="container">
     <div class="row justify-content-center">
@@ -17,7 +19,15 @@
 
     private async Task Update()
     {
-        var result = await _customerService.UpdateCustomerAsync(Id, Customer);
-        await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result != null));
+        try
+        {
+            var result = await _customerService.UpdateCustomerAsync(Id, Customer);
+            await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result != null));
+            toastService.ShowSuccess("Customer updated successfully!");
+        }
+        catch
+        {
+            toastService.ShowError("Something went wrong!");
+        }
     }
 }

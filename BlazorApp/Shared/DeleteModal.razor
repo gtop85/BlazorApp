@@ -1,4 +1,5 @@
 ﻿@inject ICustomerService _customerService
+@inject IToastService toastService
 
 <h4>
     Are sure you want to delete @CompanyName?
@@ -16,7 +17,15 @@
 
     private async Task Delete()
     {
-        var result = await _customerService.DeleteCustomerAsync(Id);
-        await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+        try
+        {
+            var result = await _customerService.DeleteCustomerAsync(Id);
+            await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+            toastService.ShowSuccess("Customer deleted successfully!");
+        }
+        catch
+        {
+            toastService.ShowError("Something went wrong!");
+        }
     }
 }

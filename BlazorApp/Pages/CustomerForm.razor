@@ -1,6 +1,7 @@
 ﻿@page "/customerForm"
 @attribute [Authorize]
 @inject ICustomerService _customerService
+@inject IToastService toastService
 
 <h3>Enter customer's details</h3>
 <div class="col-md-8 col-lg-4">
@@ -13,9 +14,17 @@
 
     private async Task AddCustomer()
     {
-        var result = await _customerService.CreateCustomerAsync(newCustomer);
+        try
+        {
+            var result = await _customerService.CreateCustomerAsync(newCustomer);
 
-        newCustomer = new CustomerViewModel();
+            newCustomer = new CustomerViewModel();
+            toastService.ShowSuccess("Customer created successfully!");
+        }
+        catch
+        {
+            toastService.ShowError("Something went wrong!");
+        }
     }
 
     private void ClearForm()

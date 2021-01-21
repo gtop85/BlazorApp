@@ -1,5 +1,6 @@
 using AutoMapper;
 using Blazored.Modal;
+using Blazored.Toast;
 using DataAccessLibrary;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -32,6 +33,7 @@ namespace BlazorApp
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazoredModal();
+            services.AddBlazoredToast();
 
             services.AddTransient<IDBContext, DBContext>();
             services.AddTransient<ICustomerContext, CustomerContext>();

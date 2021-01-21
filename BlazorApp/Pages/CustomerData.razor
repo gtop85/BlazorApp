@@ -1,32 +1,49 @@
-﻿@page "/customerData"
-    @attribute [Authorize]
-    @inject ICustomerService _customerService
-    <h2>Customer management</h2>
+﻿@using Microsoft.Extensions.Logging
+@page "/customerData"
+@attribute [Authorize]
+@inject ICustomerService _customerService
+@inject ILogger<CustomerData> Logger
 
-    @if (customers == null)
+<h2>Customer management</h2>
+
+@if (customers != null)
+{
+    <CustomerTable @bind-Customers="customers" @bind-CurrentPage="currentPage"
+                @bind-TotalPages="totalPages" @bind-Pagination="pagination">
+    </CustomerTable>
+}
+else if (loadFailed)
+{
+    <h3>Sorry, we could not load customers due to an error.</h3>
+}
+else
+{
+    <h3><em>Loading...</em></h3>
+}
+
+@code {
+
+    private CustomerCollection customerCollection;
+    private List<CustomerViewModel> customers;
+    private int totalPages;
+    private int currentPage = 1;
+    private PaginationDTO pagination = new PaginationDTO { Page = 1, Pagesize = 10 };
+    private bool loadFailed;
+
+    protected override async Task OnInitializedAsync()
     {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <CustomerTable @bind-Customers="customers" @bind-CurrentPage="currentPage"
-                       @bind-TotalPages="totalPages" @bind-Pagination="pagination">
-        </CustomerTable>
-    }
-
-    @code {
-
-        private CustomerCollection customerCollection;
-        private List<CustomerViewModel> customers;
-        private int totalPages;
-        private int currentPage = 1;
-        private PaginationDTO pagination = new PaginationDTO { Page = 1, Pagesize = 10 };
-
-        protected override async Task OnInitializedAsync()
+        try
         {
+            loadFailed = false;
             customerCollection = await _customerService.FetchCustomersAsync(pagination);
             customers = customerCollection.Items;
             currentPage = customerCollection.CurrentPage;
             totalPages = customerCollection.TotalPages;
         }
+        catch (Exception ex)
+        {
+            loadFailed = true;
+            Logger.LogWarning(ex, "Failed to load customers");
+        }
     }
+}
